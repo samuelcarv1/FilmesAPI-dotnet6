@@ -45,9 +45,13 @@ public class FilmeController : Controller
     /// <param name="take">Número de registros a serem retornados (quantidade por página)</param>
     /// <returns>Uma lista de filmes</returns>
     [HttpGet]
-    public IEnumerable<ReadFilmeDto> RecuperaFilmes([FromQuery] int skip = 0,[FromQuery] int take = 50)
+    public IEnumerable<ReadFilmeDto> RecuperaFilmes([FromQuery] int skip = 0,[FromQuery] int take = 50, [FromQuery] string? nomeCinema = null)
     {
-        return _mapper.Map<List<ReadFilmeDto>>(_context.Filmes.Skip(skip).Take(take).ToList());
+        if(nomeCinema == null)
+            return _mapper.Map<List<ReadFilmeDto>>(_context.Filmes.Skip(skip).Take(take).ToList());
+
+        return _mapper.Map<List<ReadFilmeDto>>(_context.Filmes.Skip(skip).Take(take).Where(f => f.Sessoes.Any(s => s.Cinema.Nome == nomeCinema)).ToList());
+
     }
 
     /// <summary>
